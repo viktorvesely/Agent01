@@ -56,20 +56,19 @@ def main():
     gamma = 0.99
     copy_step = 25
     num_states = len(env.observation_space.sample())
-    print(num_states)
     num_actions = env.action_space.n
-    hidden_units = [128, 128]
+    hidden_units = [32]
     max_experiences = 10000
     min_experiences = 100
     batch_size = 32
 
     TrainNet = DQN(num_states, num_actions, hidden_units, gamma, max_experiences, min_experiences, batch_size)
     TargetNet = DQN(num_states, num_actions, hidden_units, gamma, max_experiences, min_experiences, batch_size)
-    N = 100000
+    N = 10000
     total_rewards = np.empty(N)
     epsilon = 0.99
     decay = 0.9999
-    min_epsilon = 0.1
+    min_epsilon = 0.08
     for n in range(N):
         epsilon = max(min_epsilon, epsilon * decay)
         total_reward = play_game(env, TrainNet, TargetNet, epsilon, copy_step)

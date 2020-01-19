@@ -12,11 +12,16 @@ class DQN:
         self.experience = {'s': [], 'a': [], 'r': [], 's2': [], 'done': []}
         self.max_experiences = max_experiences
         self.min_experiences = min_experiences
+
+        self.model.compile(
+            self.optimizer,
+            loss = tf.keras.losses.MeanSquaredError()
+        )
     
     def predict(self, inputs):
-        return self.model(np.atleast_2d(inputs.astype('float32')))
+        reworked_inputs = np.atleast_2d(inputs.astype('float32'))
+        return self.model(reworked_inputs)
 
-    @tf.function
     def train(self, TargetNet):
         if len(self.experience['s']) < self.min_experiences:
             return 0
@@ -28,6 +33,10 @@ class DQN:
         dones = np.asarray([self.experience['done'][i] for i in ids])
         value_next = np.max(TargetNet.predict(states_next), axis=1)
         actual_values = np.where(dones, rewards, rewards+self.gamma*value_next)
+
+        selected_action_values = tf.math.reduce_sum(
+                self.predict(states) * tf.one_hot(actions, self.num_actions), axis=1
+                )
 
         with tf.GradientTape() as tape:
             selected_action_values = tf.math.reduce_sum(
