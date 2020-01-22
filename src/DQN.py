@@ -3,7 +3,15 @@ import numpy as np
 import tensorflow as tf
 
 class DQN:
-    def __init__(self, num_states, num_actions, hidden_units, gamma, max_experiences, min_experiences, batch_size):
+    def __init__(self,
+    num_states,
+    num_actions,
+    hidden_units,
+    gamma,
+    max_experiences,
+    min_experiences,
+    batch_size
+    ):
         self.num_actions = num_actions
         self.batch_size = batch_size
         self.optimizer = tf.keras.optimizers.RMSprop(0.001)
